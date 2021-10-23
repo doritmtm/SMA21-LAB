@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">HelloWebViewServices</string>
+    <string name="butBackground">Download Background</string>
+    <string name="butForeground">Download Foreground</string>
+</resources>
