@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -25,6 +26,8 @@ public class WebsearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         webview=findViewById(R.id.webview);
         webview.loadUrl("https://google.com/imghp");
+        WebSettings webSettings=webview.getSettings();
+        webSettings.setJavaScriptEnabled(true);
         webview.setWebViewClient(new WebViewClient());
     }
     @RequiresApi(api = Build.VERSION_CODES.M)
