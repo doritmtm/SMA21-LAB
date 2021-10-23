@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.example.hellowebviewservices.services.ForegroundImageService;
 import com.example.hellowebviewservices.services.ImageIntentService;
 
 public class WebsearchActivity extends AppCompatActivity {
@@ -52,7 +53,7 @@ public class WebsearchActivity extends AppCompatActivity {
                     startService(intent);
                     break;
                 case R.id.butForeground:
-                    intent=new Intent(this, ImageIntentService.class);
+                    intent=new Intent(this, ForegroundImageService.class);
                     intent.putExtra(Intent.EXTRA_TEXT,url);
                     intent.setAction("myact.startforegroundsvc");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
