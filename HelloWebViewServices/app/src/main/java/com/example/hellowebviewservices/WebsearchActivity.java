@@ -40,14 +40,25 @@ public class WebsearchActivity extends AppCompatActivity {
         }
         else
         {
+            Intent intent;
             switch(view.getId())
             {
                 case R.id.butBackground:
-                    Intent intent=new Intent(this, ImageIntentService.class);
+                    intent=new Intent(this, ImageIntentService.class);
                     intent.putExtra(Intent.EXTRA_TEXT,url);
                     startService(intent);
                     break;
                 case R.id.butForeground:
+                    intent=new Intent(this, ImageIntentService.class);
+                    intent.putExtra(Intent.EXTRA_TEXT,url);
+                    intent.setAction("myact.startforegroundsvc");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(intent);
+                    }
+                    else
+                    {
+                        startService(intent);
+                    }
                     break;
             }
         }
