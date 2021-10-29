@@ -10,6 +10,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HelloWebViewServices">
+        <service
+            android:name=".services.ForegroundImageService"
+            android:exported="false"/>
+        <service
+            android:name=".services.ImageIntentService"
+            android:exported="false"/>
         <activity
             android:name=".ImageActivity"
             android:exported="false" />

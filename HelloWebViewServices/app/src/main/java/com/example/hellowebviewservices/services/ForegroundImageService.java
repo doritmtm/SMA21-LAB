@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -41,13 +42,17 @@ public class ForegroundImageService extends Service {
     }
     public int onStartCommand(Intent intent, int flags, int startId)
     {
+        Log.d("MYAPPPPPP","I do something foreground!");
+        Log.d("MYAPPPPPP",intent.getAction());
         if(intent.getAction().equals("myact.startforegroundsvc"))
         {
             DownloadImageThread down=new DownloadImageThread(intent,(MyApplication) getApplication());
+            down.start();
         }
         if(intent.getAction().equals("myact.stopforegroundsvc"))
         {
-            Intent intent1=new Intent(this, ImageActivity.class);
+            Intent intent1=new Intent(getApplicationContext(), ImageActivity.class);
+            intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent1);
             stopForeground(true);
             stopSelf();
