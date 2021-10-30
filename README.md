@@ -4,6 +4,7 @@ SMA 2021 - Laborator
 Morariu Dorian-Sebastian
 
 Observatie
+
 https://developer.android.com/guide/components/broadcasts
 
 Android 8.0
