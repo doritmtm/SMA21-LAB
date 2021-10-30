@@ -5,6 +5,7 @@ Morariu Dorian-Sebastian
 
 Observatie
 https://developer.android.com/guide/components/broadcasts
+
 Android 8.0
 Beginning with Android 8.0 (API level 26), the system imposes additional restrictions on manifest-declared receivers.
 
