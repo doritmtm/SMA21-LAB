@@ -36,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="0dp"
             android:layout_weight="1"
+            android:onClick="clicked"
             app:backgroundTint="@color/teal_700"
             app:icon="?android:attr/actionModeWebSearchDrawable"
             app:iconPadding="0dp" />
@@ -129,6 +130,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="80dp"
+        android:onClick="clicked"
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:text="@string/update"
