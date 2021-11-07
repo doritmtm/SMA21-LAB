@@ -3,6 +3,8 @@ package com.example.smartwallet;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,10 +26,12 @@ public class SmartWalletActivity extends AppCompatActivity {
     private DatabaseReference dbref;
     private MonthlyExpenses mexpense=null;
     private String month=null;
+    private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pref=getPreferences(Context.MODE_PRIVATE);
         monthText=findViewById(R.id.monthText);
         monthInput=findViewById(R.id.monthInput);
         updateBut=findViewById(R.id.updateButton);
@@ -35,6 +39,12 @@ public class SmartWalletActivity extends AppCompatActivity {
         incomeInput=findViewById(R.id.incomeInput);
         expensesInput=findViewById(R.id.expensesInput);
         dbref= FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
+        month=pref.getString("month",null);
+        if(month!=null)
+        {
+            monthInput.setText(month);
+            clicked(searchBut);
+        }
     }
 
     public void clicked(View view)
@@ -43,6 +53,7 @@ public class SmartWalletActivity extends AppCompatActivity {
         {
             case R.id.searchButton:
                 month=monthInput.getText().toString();
+                pref.edit().putString("month",month).apply();
                 dbref.child("calendar").child(month).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
