@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartwallet.models.MonthlyExpenses;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,7 +22,8 @@ public class SmartWalletActivity extends AppCompatActivity {
     private Button updateBut,searchBut;
     private EditText monthInput,incomeInput,expensesInput;
     private DatabaseReference dbref;
-    private MonthlyExpenses mexpense;
+    private MonthlyExpenses mexpense=null;
+    private String month=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +42,7 @@ public class SmartWalletActivity extends AppCompatActivity {
         switch(view.getId())
         {
             case R.id.searchButton:
-                String month=monthInput.getText().toString();
+                month=monthInput.getText().toString();
                 dbref.child("calendar").child(month).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -59,6 +61,17 @@ public class SmartWalletActivity extends AppCompatActivity {
                 });
                 break;
             case R.id.updateButton:
+                if(mexpense!=null && month!=null)
+                {
+                    try {
+                        mexpense.setIncome(Float.parseFloat(incomeInput.getText().toString()));
+                        mexpense.setExpenses(Float.parseFloat(expensesInput.getText().toString()));
+                        dbref.child("calendar").child(month).setValue(mexpense);
+                    } catch (NumberFormatException e)
+                    {
+                        Toast.makeText(getApplicationContext(),"Incorrect number introduced!",Toast.LENGTH_SHORT).show();
+                    }
+                }
                 break;
         }
     }
