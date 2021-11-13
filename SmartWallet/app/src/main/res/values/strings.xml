@@ -3,4 +3,6 @@
     <string name="income">Income:</string>
     <string name="expenses">Expenses:</string>
     <string name="update">Update</string>
+    <string name="left">Previous</string>
+    <string name="right">Next</string>
 </resources>
