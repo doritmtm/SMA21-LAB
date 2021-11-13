@@ -1,5 +1,6 @@
 package com.example.smartwallet.ui;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ public class PaymentListAdapter extends RecyclerView.Adapter<PaymentListAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_payment_list,parent,true);
+        View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_payment_list,parent,false);
         return new ViewHolder(view);
     }
 

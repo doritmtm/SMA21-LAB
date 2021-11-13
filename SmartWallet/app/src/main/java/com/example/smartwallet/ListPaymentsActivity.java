@@ -2,6 +2,7 @@ package com.example.smartwallet;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -39,6 +40,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
         month=3;
         PaymentListAdapter paymentAdapter=new PaymentListAdapter();
         paymentsList.setAdapter(paymentAdapter);
+        paymentsList.setLayoutManager(new LinearLayoutManager(this));
         dbref=FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
         dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -57,6 +59,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
                 }
                 paymentAdapter.setPaymentDataList(paymentDataList);
                 statusText.setText("Success!");
+                paymentsList.setAdapter(paymentAdapter);
             }
         });
         monthText.setText("All Payments");
