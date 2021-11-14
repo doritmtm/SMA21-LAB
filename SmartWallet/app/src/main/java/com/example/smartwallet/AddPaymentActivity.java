@@ -2,6 +2,7 @@ package com.example.smartwallet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -46,6 +47,8 @@ public class AddPaymentActivity extends AppCompatActivity {
                 String currentDate=dateFormat.format(date);
                 pay.setDate(currentDate);
                 dbref.child("wallet").child(currentDate).setValue(pay);
+                Intent intent=new Intent(this,ListPaymentsActivity.class);
+                startActivity(intent);
                 break;
         }
     }

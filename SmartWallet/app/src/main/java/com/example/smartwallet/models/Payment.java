@@ -50,10 +50,12 @@ public class Payment {
         this.type = type;
     }
 
+    @Exclude
     public String getDate() {
         return date;
     }
 
+    @Exclude
     public void setDate(String date) {
         this.date = date;
     }
