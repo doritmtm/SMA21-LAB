@@ -55,4 +55,20 @@ public class Payment {
     public void setDate(String date) {
         this.date = date;
     }
+
+    public static int getColorForType(String type)
+    {
+        if(type.equals("food"))
+        {
+            return 0xFFF44436;
+        }
+        else if(type.equals("electronics"))
+        {
+            return 0xFF00BCD4;
+        }
+        else
+        {
+            return 0xFFCCCCCC;
+        }
+    }
 }

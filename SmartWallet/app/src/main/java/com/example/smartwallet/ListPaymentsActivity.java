@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -65,5 +66,15 @@ public class ListPaymentsActivity extends AppCompatActivity {
             }
         });
         monthText.setText("All Payments");
+    }
+
+    public void clicked(View view)
+    {
+        switch(view.getId())
+        {
+            case R.id.addPaymentFAB:
+
+                break;
+        }
     }
 }
