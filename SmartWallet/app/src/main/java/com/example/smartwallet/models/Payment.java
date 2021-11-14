@@ -1,11 +1,13 @@
 package com.example.smartwallet.models;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class Payment {
     private double cost;
     private String name,type;
+    @Exclude
     private String date;
 
     public Payment() {

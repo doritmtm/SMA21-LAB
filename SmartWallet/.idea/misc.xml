@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Teme/SMA/SMA21-LAB/SmartWallet/app/src/main/res/layout/activity_add_payment.xml" value="0.264" />
         <entry key="..\:/Teme/SMA/SMA21-LAB/SmartWallet/app/src/main/res/layout/activity_list_payments.xml" value="0.2" />
         <entry key="..\:/Teme/SMA/SMA21-LAB/SmartWallet/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Teme/SMA/SMA21-LAB/SmartWallet/app/src/main/res/layout/item_payment_list.xml" value="0.264" />

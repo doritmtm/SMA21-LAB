@@ -5,4 +5,9 @@
     <string name="update">Update</string>
     <string name="left">Previous</string>
     <string name="right">Next</string>
+    <string name="save">Save</string>
+    <string name="name">Name:</string>
+    <string name="cost">Cost:</string>
+    <string name="type">Type:</string>
+    <string name="addpay">Add Payment</string>
 </resources>

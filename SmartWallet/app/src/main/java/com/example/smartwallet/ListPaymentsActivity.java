@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -73,7 +74,8 @@ public class ListPaymentsActivity extends AppCompatActivity {
         switch(view.getId())
         {
             case R.id.addPaymentFAB:
-
+                Intent intent=new Intent(this,AddPaymentActivity.class);
+                startActivity(intent);
                 break;
         }
     }

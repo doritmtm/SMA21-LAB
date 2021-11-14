@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SmartWallet">
         <activity
+            android:name=".AddPaymentActivity"
+            android:exported="false" />
+        <activity
             android:name=".ListPaymentsActivity"
             android:exported="true">
             <intent-filter>
