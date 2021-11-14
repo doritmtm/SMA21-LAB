@@ -41,7 +41,8 @@ public class ListPaymentsActivity extends AppCompatActivity {
         month=3;
         PaymentListAdapter paymentAdapter=new PaymentListAdapter();
         paymentsList.setAdapter(paymentAdapter);
-        paymentsList.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager listMgr=new LinearLayoutManager(this);
+        paymentsList.setLayoutManager(listMgr);
         dbref=FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
         dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override

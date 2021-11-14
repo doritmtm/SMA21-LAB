@@ -65,7 +65,7 @@ public class PaymentListAdapter extends RecyclerView.Adapter<PaymentListAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Payment payment=paymentDataList.get(position);
         holder.listNameText.setText(payment.getName());
-        holder.listCostText.setText(Double.toString(payment.getCost()));
+        holder.listCostText.setText(Double.toString(payment.getCost())+" RON");
         holder.listTypeText.setText(payment.getType());
         holder.listDateText.setText(payment.getDate());
     }
