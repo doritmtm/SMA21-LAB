@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 public class SmartWalletActivity extends AppCompatActivity {
     private TextView monthText;
     private Button updateBut,searchBut;
@@ -27,31 +32,51 @@ public class SmartWalletActivity extends AppCompatActivity {
     private MonthlyExpenses mexpense=null;
     private String month=null;
     private SharedPreferences pref;
+    private Spinner monthSpinner;
+    private ArrayAdapter monthsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pref=getPreferences(Context.MODE_PRIVATE);
         monthText=findViewById(R.id.monthText);
-        monthInput=findViewById(R.id.monthInput);
+        //monthInput=findViewById(R.id.monthInput);
         updateBut=findViewById(R.id.updateButton);
-        searchBut=findViewById(R.id.searchButton);
+        //searchBut=findViewById(R.id.searchButton);
         incomeInput=findViewById(R.id.incomeInput);
         expensesInput=findViewById(R.id.expensesInput);
+        monthSpinner=findViewById(R.id.monthSpinner);
+        monthsAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item);
+        monthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        monthSpinner.setAdapter(monthsAdapter);
         dbref= FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
-        month=pref.getString("month",null);
+        /*month=pref.getString("month",null);
         if(month!=null)
         {
             monthInput.setText(month);
             clicked(searchBut);
-        }
+        }*/
+        dbref.child("calendar").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                DataSnapshot snap=task.getResult();
+                DataSnapshot itsnap;
+                Iterator<DataSnapshot> it=snap.getChildren().iterator();
+                monthsAdapter.clear();
+                while(it.hasNext())
+                {
+                    itsnap=it.next();
+                    monthsAdapter.add(itsnap.getKey());
+                }
+            }
+        });
     }
 
     public void clicked(View view)
     {
         switch(view.getId())
         {
-            case R.id.searchButton:
+            /*case R.id.searchButton:
                 month=monthInput.getText().toString();
                 pref.edit().putString("month",month).apply();
                 dbref.child("calendar").child(month).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -70,7 +95,7 @@ public class SmartWalletActivity extends AppCompatActivity {
                         }
                     }
                 });
-                break;
+                break;*/
             case R.id.updateButton:
                 if(mexpense!=null && month!=null)
                 {

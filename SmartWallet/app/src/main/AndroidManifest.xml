@@ -13,7 +13,7 @@
             android:name=".AddPaymentActivity"
             android:exported="false" />
         <activity
-            android:name=".ListPaymentsActivity"
+            android:name=".SmartWalletActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SmartWalletActivity"
+            android:name=".ListPaymentsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
