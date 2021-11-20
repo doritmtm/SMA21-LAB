@@ -36,10 +36,13 @@ public class SmartWalletActivity extends AppCompatActivity {
     private String month=null;
     private Spinner monthSpinner;
     private ArrayAdapter monthsAdapter;
+    private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pref=getPreferences(Context.MODE_PRIVATE);
+        month=pref.getString("month",null);
         monthText = findViewById(R.id.monthText);
         updateBut = findViewById(R.id.updateButton);
         incomeInput = findViewById(R.id.incomeInput);
@@ -52,6 +55,7 @@ public class SmartWalletActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 month = monthsAdapter.getItem(position).toString();
+                pref.edit().putString("month",month).apply();
                 dbref.child("calendar").child(month).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -78,6 +82,10 @@ public class SmartWalletActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 DataSnapshot snap = task.getResult();
                 updateMonthsFromDB(snap);
+                if(snap.hasChild(month))
+                {
+                    monthSpinner.setSelection(monthsAdapter.getPosition(month));
+                }
             }
         });
         dbref.child("calendar").addValueEventListener(new ValueEventListener() {
