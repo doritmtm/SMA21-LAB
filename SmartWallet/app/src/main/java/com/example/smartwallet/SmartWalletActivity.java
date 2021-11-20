@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,36 +27,53 @@ import java.util.Iterator;
 
 public class SmartWalletActivity extends AppCompatActivity {
     private TextView monthText;
-    private Button updateBut,searchBut;
-    private EditText monthInput,incomeInput,expensesInput;
+    private Button updateBut;
+    private EditText incomeInput,expensesInput;
     private DatabaseReference dbref;
     private MonthlyExpenses mexpense=null;
     private String month=null;
-    private SharedPreferences pref;
     private Spinner monthSpinner;
     private ArrayAdapter monthsAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pref=getPreferences(Context.MODE_PRIVATE);
         monthText=findViewById(R.id.monthText);
-        //monthInput=findViewById(R.id.monthInput);
         updateBut=findViewById(R.id.updateButton);
-        //searchBut=findViewById(R.id.searchButton);
         incomeInput=findViewById(R.id.incomeInput);
         expensesInput=findViewById(R.id.expensesInput);
         monthSpinner=findViewById(R.id.monthSpinner);
         monthsAdapter=new ArrayAdapter(this, android.R.layout.simple_spinner_item);
         monthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         monthSpinner.setAdapter(monthsAdapter);
+        monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                month=monthsAdapter.getItem(position).toString();
+                dbref.child("calendar").child(month).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        mexpense =task.getResult().getValue(MonthlyExpenses.class);
+                        if(mexpense!=null)
+                        {
+                            monthText.setText(month);
+                            incomeInput.setText(Float.toString(mexpense.getIncome()));
+                            expensesInput.setText(Float.toString(mexpense.getExpenses()));
+                        }
+                        else
+                        {
+                            monthText.setText("Error finding "+month+" in database");
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         dbref= FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
-        /*month=pref.getString("month",null);
-        if(month!=null)
-        {
-            monthInput.setText(month);
-            clicked(searchBut);
-        }*/
         dbref.child("calendar").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -76,26 +94,6 @@ public class SmartWalletActivity extends AppCompatActivity {
     {
         switch(view.getId())
         {
-            /*case R.id.searchButton:
-                month=monthInput.getText().toString();
-                pref.edit().putString("month",month).apply();
-                dbref.child("calendar").child(month).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        mexpense =task.getResult().getValue(MonthlyExpenses.class);
-                        if(mexpense!=null)
-                        {
-                            monthText.setText(month);
-                            incomeInput.setText(Float.toString(mexpense.getIncome()));
-                            expensesInput.setText(Float.toString(mexpense.getExpenses()));
-                        }
-                        else
-                        {
-                            monthText.setText("Error finding "+month+" in database");
-                        }
-                    }
-                });
-                break;*/
             case R.id.updateButton:
                 if(mexpense!=null && month!=null)
                 {
