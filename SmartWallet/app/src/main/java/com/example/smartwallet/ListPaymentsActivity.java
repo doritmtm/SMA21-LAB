@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -17,8 +19,10 @@ import com.example.smartwallet.ui.PaymentListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -45,12 +49,12 @@ public class ListPaymentsActivity extends AppCompatActivity {
         paymentsList.setAdapter(paymentAdapter);
         LinearLayoutManager listMgr=new LinearLayoutManager(this);
         paymentsList.setLayoutManager(listMgr);
-        dbref=FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
-        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        dbref=AppState.instance().getDBref();
+        dbref.child("wallet").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                DataSnapshot datasnapParent=task.getResult();
-                Iterator<DataSnapshot> it=datasnapParent.getChildren().iterator();
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                PaymentListAdapter paymentAdapter=new PaymentListAdapter();
+                Iterator<DataSnapshot> it=snapshot.getChildren().iterator();
                 DataSnapshot datasnap;
                 Payment payment;
                 paymentDataList=new ArrayList<>();
@@ -65,6 +69,11 @@ public class ListPaymentsActivity extends AppCompatActivity {
                 statusText.setText("Success!");
                 paymentsList.setAdapter(paymentAdapter);
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
         });
         monthText.setText("All Payments");
     }
@@ -74,6 +83,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
         switch(view.getId())
         {
             case R.id.addPaymentFAB:
+                AppState.instance().setPayment(null);
                 Intent intent=new Intent(this,AddPaymentActivity.class);
                 startActivity(intent);
                 break;

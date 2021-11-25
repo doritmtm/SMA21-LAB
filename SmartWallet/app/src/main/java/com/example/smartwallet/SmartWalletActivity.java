@@ -21,10 +21,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 public class SmartWalletActivity extends AppCompatActivity {
@@ -35,7 +33,7 @@ public class SmartWalletActivity extends AppCompatActivity {
     private MonthlyExpenses mexpense=null;
     private String month=null;
     private Spinner monthSpinner;
-    private ArrayAdapter monthsAdapter;
+    private ArrayAdapter<String> monthsAdapter;
     private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +47,7 @@ public class SmartWalletActivity extends AppCompatActivity {
         expensesInput = findViewById(R.id.expensesInput);
         monthSpinner = findViewById(R.id.monthSpinner);
         monthsAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item);
+        AppState.instance().setTypesAdapter(monthsAdapter);
         monthsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         monthSpinner.setAdapter(monthsAdapter);
         monthSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -76,7 +75,7 @@ public class SmartWalletActivity extends AppCompatActivity {
 
             }
         });
-        dbref = FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
+        dbref = AppState.instance().getDBref();
         dbref.child("calendar").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {

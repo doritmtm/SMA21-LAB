@@ -11,9 +11,10 @@
         android:theme="@style/Theme.SmartWallet">
         <activity
             android:name=".AddPaymentActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog"/>
         <activity
-            android:name=".SmartWalletActivity"
+            android:name=".ListPaymentsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ListPaymentsActivity"
+            android:name=".SmartWalletActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,5 +1,6 @@
 package com.example.smartwallet.ui;
 
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.smartwallet.AddPaymentActivity;
+import com.example.smartwallet.AppState;
 import com.example.smartwallet.R;
 import com.example.smartwallet.models.Payment;
 
@@ -29,12 +32,21 @@ public class PaymentListAdapter extends RecyclerView.Adapter<PaymentListAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
         private TextView listNameText,listDateText,listTypeText,listCostText;
+        private Payment payment;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             listNameText=itemView.findViewById(R.id.listNameText);
             listDateText=itemView.findViewById(R.id.listDateText);
             listTypeText=itemView.findViewById(R.id.listTypeText);
             listCostText=itemView.findViewById(R.id.listCostText);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppState.instance().setPayment(payment);
+                    Intent intent=new Intent(v.getContext(), AddPaymentActivity.class);
+                    v.getContext().startActivity(intent);
+                }
+            });
         }
 
         public TextView getListNameText() {
@@ -69,6 +81,7 @@ public class PaymentListAdapter extends RecyclerView.Adapter<PaymentListAdapter.
         holder.listTypeText.setText(payment.getType());
         holder.listDateText.setText(payment.getDate());
         holder.listNameText.setBackgroundColor(Payment.getColorForType(payment.getType()));
+        holder.payment=payment;
     }
 
     @Override
