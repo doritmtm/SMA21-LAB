@@ -2,7 +2,11 @@ package com.example.smartwallet;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -34,6 +38,9 @@ public class AddPaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_add_payment);
+        //ConnectivityManager cm=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        //cm.getActiveNetworkInfo();
+        //NetworkInfo
         nameInput=findViewById(R.id.nameInput);
         costInput=findViewById(R.id.costInput);
         typeSpinner=findViewById(R.id.typeSpinner);
@@ -98,6 +105,7 @@ public class AddPaymentActivity extends AppCompatActivity {
                 break;
             case R.id.deleteButton:
                 dbref.child("wallet").child(payment.getDate()).removeValue();
+                AppState.instance().deleteFromBackup(payment);
                 break;
         }
         finish();

@@ -3,8 +3,10 @@ package com.example.smartwallet.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.io.Serializable;
+
 @IgnoreExtraProperties
-public class Payment {
+public class Payment implements Serializable {
     private double cost;
     private String name,type;
     @Exclude

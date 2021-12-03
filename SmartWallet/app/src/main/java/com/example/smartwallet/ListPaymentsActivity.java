@@ -43,6 +43,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_payments);
+        AppState.instance().setContext(getApplicationContext());
         leftButton=findViewById(R.id.leftButton);
         rightButton=findViewById(R.id.rightButton);
         monthText=findViewById(R.id.monthText2);
@@ -69,6 +70,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
                     payment=datasnap.getValue(Payment.class);
                     payment.setDate(datasnap.getKey());
                     paymentDataList.add(payment);
+                    AppState.instance().updateBackup(payment);
                 }
                 if(currentMonth==0 && paymentDataList.size()>0)
                 {
