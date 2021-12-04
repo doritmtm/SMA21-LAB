@@ -1,13 +1,17 @@
 package com.example.smartwallet;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -38,9 +42,7 @@ public class AddPaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_add_payment);
-        //ConnectivityManager cm=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        //cm.getActiveNetworkInfo();
-        //NetworkInfo
+        Log.d("MYAPPP","NR networks IN ADD:"+Integer.toString(AppState.instance().getNrNetworksAvailable()));
         nameInput=findViewById(R.id.nameInput);
         costInput=findViewById(R.id.costInput);
         typeSpinner=findViewById(R.id.typeSpinner);
@@ -102,6 +104,7 @@ public class AddPaymentActivity extends AppCompatActivity {
                     pay.setDate(payment.getDate());
                 }
                 dbref.child("wallet").child(pay.getDate()).setValue(pay);
+                AppState.instance().updateBackup(pay);
                 break;
             case R.id.deleteButton:
                 dbref.child("wallet").child(payment.getDate()).removeValue();

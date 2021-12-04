@@ -8,6 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -39,7 +44,33 @@ public class ListPaymentsActivity extends AppCompatActivity {
     private int currentMonth;
     private PaymentListAdapter paymentAdapter=new PaymentListAdapter();
     private SharedPreferences pref;
-    @Override
+
+    public class PaymentDataListener implements ValueEventListener
+    {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+            Iterator<DataSnapshot> it = snapshot.getChildren().iterator();
+            DataSnapshot datasnap;
+            Payment payment;
+            paymentDataList = new ArrayList<>();
+            while (it.hasNext()) {
+                datasnap = it.next();
+                payment = datasnap.getValue(Payment.class);
+                payment.setDate(datasnap.getKey());
+                paymentDataList.add(payment);
+                AppState.instance().updateBackup(payment);
+            }
+            updatePaymentsListUI();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+
+        }
+    }
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_payments);
@@ -55,39 +86,59 @@ public class ListPaymentsActivity extends AppCompatActivity {
         paymentsList.setAdapter(paymentAdapter);
         LinearLayoutManager listMgr=new LinearLayoutManager(this);
         paymentsList.setLayoutManager(listMgr);
+        ConnectivityManager cm=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network network=null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cm.registerNetworkCallback(new NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).addCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED).build(),new ConnectivityManager.NetworkCallback()
+            {
+                @Override
+                public void onAvailable(@NonNull Network network) {
+                    super.onAvailable(network);
+                    AppState.instance().countUpNetwork();
+                    AppState.instance().syncBackupWithFirebase();
+                    Log.d("MYAPPP","Network");
+                }
+
+                @Override
+                public void onLost(@NonNull Network network) {
+                    super.onLost(network);
+                    AppState.instance().countDownNetwork();
+                    Log.d("MYAPPP","No Network");
+                }
+            });
+            network=cm.getActiveNetwork();
+        }
+        if(network!=null)
+        {
+            AppState.instance().syncBackupWithFirebase();
+        }
         dbref=AppState.instance().getDBref();
-        dbref.child("wallet").addValueEventListener(new ValueEventListener() {
+        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                Iterator<DataSnapshot> it=snapshot.getChildren().iterator();
-                DataSnapshot datasnap;
-                Payment payment;
-                paymentDataList=new ArrayList<>();
-                while(it.hasNext())
-                {
-                    datasnap=it.next();
-                    payment=datasnap.getValue(Payment.class);
-                    payment.setDate(datasnap.getKey());
-                    paymentDataList.add(payment);
-                    AppState.instance().updateBackup(payment);
-                }
-                if(currentMonth==0 && paymentDataList.size()>0)
-                {
-                    currentMonth=Integer.parseInt(paymentDataList.get(0).getDate().substring(5,7));
-                    pref.edit().putInt("currentMonth",currentMonth).apply();
-                }
-                paymentAdapter.setPaymentDataList(filterDBPayments(currentMonth));
-                monthText.setText("Payments from "+getMonthName(currentMonth));
-                statusText.setText("Success!");
-                paymentsList.setAdapter(paymentAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                dbref.child("wallet").addValueEventListener(new PaymentDataListener());
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ConnectivityManager cm=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network network=null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            network=cm.getActiveNetwork();
+        }
+        if(network==null)
+        {
+            Log.d("MYAPPP","NETWORK NULL");
+            updatePaymentsListUI();
+        }
+        else
+        {
+            Log.d("MYAPPP","NETWORK SOME");
+        }
+        Log.d("MYAPPP","NR networks:"+Integer.toString(AppState.instance().getNrNetworksAvailable()));
     }
 
     public void clicked(View view)
@@ -156,4 +207,19 @@ public class ListPaymentsActivity extends AppCompatActivity {
         }
         return "Error";
     }
+
+    public void updatePaymentsListUI()
+    {
+        paymentDataList=AppState.instance().loadBackup();
+        if(currentMonth==0 && paymentDataList.size()>0)
+        {
+            currentMonth=Integer.parseInt(paymentDataList.get(0).getDate().substring(5,7));
+            pref.edit().putInt("currentMonth",currentMonth).apply();
+        }
+        paymentAdapter.setPaymentDataList(filterDBPayments(currentMonth));
+        monthText.setText("Payments from "+getMonthName(currentMonth));
+        statusText.setText("Success!");
+        paymentsList.setAdapter(paymentAdapter);
+    }
+
 }

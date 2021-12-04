@@ -6,7 +6,12 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
+
 import com.example.smartwallet.models.Payment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,7 +27,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class AppState {
     private static AppState singleton;
@@ -30,8 +38,10 @@ public class AppState {
     private DatabaseReference dbref;
     private ArrayAdapter<String> typesAdapter;
     private Context context;
+    private int nrNetworksAvailable=0;
     public AppState()
     {
+        //FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").setPersistenceEnabled(true);
         dbref = FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
     }
     public static AppState instance()
@@ -166,11 +176,83 @@ public class AppState {
         }
     }
 
+    public void syncBackupWithFirebase()
+    {
+        List<Payment> paymentDataList=loadBackup();
+        Map<String,Object> paymentDataMap=new HashMap<>();
+        for(Payment p:paymentDataList)
+        {
+            paymentDataMap.put(p.getDate(),p);
+        }
+        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                Iterator<DataSnapshot> it=task.getResult().getChildren().iterator();
+                DataSnapshot datasnap;
+                Payment payment;
+                while(it.hasNext())
+                {
+                    datasnap=it.next();
+                    payment=datasnap.getValue(Payment.class);
+                    payment.setDate(datasnap.getKey());
+                    if(!paymentDataMap.containsKey(payment.getDate()))
+                    {
+                        dbref.child("wallet").child(payment.getDate()).removeValue();
+                    }
+                }
+                dbref.child("wallet").updateChildren(paymentDataMap);
+            }
+        });
+
+    }
+
+    public void performInitialSync()
+    {
+        List<Payment> paymentDataList=loadBackup();
+        Map<String,Object> paymentDataMap=new HashMap<>();
+        for(Payment p:paymentDataList)
+        {
+            paymentDataMap.put(p.getDate(),p);
+        }
+        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                Iterator<DataSnapshot> it=task.getResult().getChildren().iterator();
+                DataSnapshot datasnap;
+                Payment payment;
+                while(it.hasNext())
+                {
+                    datasnap=it.next();
+                    payment=datasnap.getValue(Payment.class);
+                    payment.setDate(datasnap.getKey());
+                    if(!paymentDataMap.containsKey(payment.getDate()))
+                    {
+                        dbref.child("wallet").child(payment.getDate()).removeValue();
+                    }
+                }
+                dbref.child("wallet").updateChildren(paymentDataMap);
+            }
+        });
+    }
+
     public Context getContext() {
         return context;
     }
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public void countUpNetwork()
+    {
+        nrNetworksAvailable++;
+    }
+    public void countDownNetwork()
+    {
+        nrNetworksAvailable--;
+    }
+
+    public int getNrNetworksAvailable() {
+        return nrNetworksAvailable;
     }
 }
