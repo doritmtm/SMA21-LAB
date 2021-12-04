@@ -42,7 +42,6 @@ public class AddPaymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_add_payment);
-        Log.d("MYAPPP","NR networks IN ADD:"+Integer.toString(AppState.instance().getNrNetworksAvailable()));
         nameInput=findViewById(R.id.nameInput);
         costInput=findViewById(R.id.costInput);
         typeSpinner=findViewById(R.id.typeSpinner);

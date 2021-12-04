@@ -96,14 +96,12 @@ public class ListPaymentsActivity extends AppCompatActivity {
                     super.onAvailable(network);
                     AppState.instance().countUpNetwork();
                     AppState.instance().syncBackupWithFirebase();
-                    Log.d("MYAPPP","Network");
                 }
 
                 @Override
                 public void onLost(@NonNull Network network) {
                     super.onLost(network);
                     AppState.instance().countDownNetwork();
-                    Log.d("MYAPPP","No Network");
                 }
             });
             network=cm.getActiveNetwork();
@@ -131,14 +129,8 @@ public class ListPaymentsActivity extends AppCompatActivity {
         }
         if(network==null)
         {
-            Log.d("MYAPPP","NETWORK NULL");
             updatePaymentsListUI();
         }
-        else
-        {
-            Log.d("MYAPPP","NETWORK SOME");
-        }
-        Log.d("MYAPPP","NR networks:"+Integer.toString(AppState.instance().getNrNetworksAvailable()));
     }
 
     public void clicked(View view)

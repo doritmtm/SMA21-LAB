@@ -41,7 +41,6 @@ public class AppState {
     private int nrNetworksAvailable=0;
     public AppState()
     {
-        //FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").setPersistenceEnabled(true);
         dbref = FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
     }
     public static AppState instance()
