@@ -1,5 +1,7 @@
 package com.example.smartwallet;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,6 +25,9 @@ import android.widget.TextView;
 
 import com.example.smartwallet.models.Payment;
 import com.example.smartwallet.ui.PaymentListAdapter;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,7 +50,6 @@ public class ListPaymentsActivity extends AppCompatActivity {
     private int currentMonth;
     private PaymentListAdapter paymentAdapter=new PaymentListAdapter();
     private SharedPreferences pref;
-
     public class PaymentDataListener implements ValueEventListener
     {
         @Override
