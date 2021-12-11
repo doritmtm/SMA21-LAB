@@ -38,7 +38,9 @@ public class AppState {
     private DatabaseReference dbref;
     private ArrayAdapter<String> typesAdapter;
     private Context context;
+    private String uid;
     private int nrNetworksAvailable=0;
+    private boolean directoryDidNotExist=false;
     public AppState()
     {
         dbref = FirebaseDatabase.getInstance("https://smart-wallet-30b48-default-rtdb.europe-west1.firebasedatabase.app").getReference();
@@ -78,18 +80,7 @@ public class AppState {
     public List<Payment> loadBackup()
     {
         List<Payment> paymentDataList=new ArrayList<>();
-        File paymentsDir=new File(context.getFilesDir().toURI().resolve("payments"));
-        if(!paymentsDir.exists())
-        {
-            if(!paymentsDir.mkdir())
-            {
-                try {
-                    throw new IOException();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        File paymentsDir=checkPaymentDirectoriesExistenceAndReturn();
         for(File f:paymentsDir.listFiles())
         {
             try {
@@ -112,18 +103,7 @@ public class AppState {
     }
     public void updateBackup(Payment payment)
     {
-        File paymentsDir=new File(context.getFilesDir().toURI().resolve("payments"));
-        if(!paymentsDir.exists())
-        {
-            if(!paymentsDir.mkdir())
-            {
-                try {
-                    throw new IOException();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        File paymentsDir=checkPaymentDirectoriesExistenceAndReturn();
         try {
             Date paymentDate= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(payment.getDate());
             String paymentFileDate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(paymentDate);
@@ -145,18 +125,7 @@ public class AppState {
     }
     public void deleteFromBackup(Payment payment)
     {
-        File paymentsDir=new File(context.getFilesDir().toURI().resolve("payments"));
-        if(!paymentsDir.exists())
-        {
-            if(!paymentsDir.mkdir())
-            {
-                try {
-                    throw new IOException();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        File paymentsDir=checkPaymentDirectoriesExistenceAndReturn();
         try {
             Date paymentDate= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(payment.getDate());
             String paymentFileDate=new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(paymentDate);
@@ -183,7 +152,7 @@ public class AppState {
         {
             paymentDataMap.put(p.getDate(),p);
         }
-        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        dbref.child("wallet").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 Iterator<DataSnapshot> it=task.getResult().getChildren().iterator();
@@ -194,12 +163,14 @@ public class AppState {
                     datasnap=it.next();
                     payment=datasnap.getValue(Payment.class);
                     payment.setDate(datasnap.getKey());
-                    if(!paymentDataMap.containsKey(payment.getDate()))
+                    if(!directoryDidNotExist)
                     {
-                        dbref.child("wallet").child(payment.getDate()).removeValue();
+                        if (!paymentDataMap.containsKey(payment.getDate())) {
+                            dbref.child("wallet").child(uid).child(payment.getDate()).removeValue();
+                        }
                     }
                 }
-                dbref.child("wallet").updateChildren(paymentDataMap);
+                dbref.child("wallet").child(uid).updateChildren(paymentDataMap);
             }
         });
 
@@ -213,7 +184,7 @@ public class AppState {
         {
             paymentDataMap.put(p.getDate(),p);
         }
-        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        dbref.child("wallet").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 Iterator<DataSnapshot> it=task.getResult().getChildren().iterator();
@@ -224,12 +195,15 @@ public class AppState {
                     datasnap=it.next();
                     payment=datasnap.getValue(Payment.class);
                     payment.setDate(datasnap.getKey());
-                    if(!paymentDataMap.containsKey(payment.getDate()))
+                    if(!directoryDidNotExist)
                     {
-                        dbref.child("wallet").child(payment.getDate()).removeValue();
+                        if(!paymentDataMap.containsKey(payment.getDate()))
+                        {
+                            dbref.child("wallet").child(uid).child(payment.getDate()).removeValue();
+                        }
                     }
                 }
-                dbref.child("wallet").updateChildren(paymentDataMap);
+                dbref.child("wallet").child(uid).updateChildren(paymentDataMap);
             }
         });
     }
@@ -253,5 +227,42 @@ public class AppState {
 
     public int getNrNetworksAvailable() {
         return nrNetworksAvailable;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    private File checkPaymentDirectoriesExistenceAndReturn()
+    {
+        File paymentsDir=new File(context.getFilesDir().toURI().resolve("payments/"+uid));
+        if(!paymentsDir.getParentFile().exists())
+        {
+            if(!paymentsDir.getParentFile().mkdir())
+            {
+                try {
+                    throw new IOException();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(!paymentsDir.exists())
+        {
+            if(!paymentsDir.mkdir())
+            {
+                try {
+                    throw new IOException();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            directoryDidNotExist=true;
+        }
+        return paymentsDir;
     }
 }

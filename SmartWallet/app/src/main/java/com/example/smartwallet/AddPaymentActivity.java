@@ -37,11 +37,13 @@ public class AddPaymentActivity extends AppCompatActivity {
     private Button deleteButton;
     private Payment payment;
     private TextView addPaymentText;
+    private String uid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_add_payment);
+        uid=AppState.instance().getUid();
         nameInput=findViewById(R.id.nameInput);
         costInput=findViewById(R.id.costInput);
         typeSpinner=findViewById(R.id.typeSpinner);
@@ -102,11 +104,11 @@ public class AddPaymentActivity extends AppCompatActivity {
                 {
                     pay.setDate(payment.getDate());
                 }
-                dbref.child("wallet").child(pay.getDate()).setValue(pay);
+                dbref.child("wallet").child(uid).child(pay.getDate()).setValue(pay);
                 AppState.instance().updateBackup(pay);
                 break;
             case R.id.deleteButton:
-                dbref.child("wallet").child(payment.getDate()).removeValue();
+                dbref.child("wallet").child(uid).child(payment.getDate()).removeValue();
                 AppState.instance().deleteFromBackup(payment);
                 break;
         }

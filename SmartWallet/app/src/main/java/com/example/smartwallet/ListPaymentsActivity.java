@@ -50,6 +50,7 @@ public class ListPaymentsActivity extends AppCompatActivity {
     private int currentMonth;
     private PaymentListAdapter paymentAdapter=new PaymentListAdapter();
     private SharedPreferences pref;
+    private String uid;
     public class PaymentDataListener implements ValueEventListener
     {
         @Override
@@ -80,6 +81,10 @@ public class ListPaymentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_payments);
         AppState.instance().setContext(getApplicationContext());
+        Intent intent=getIntent();
+        uid=intent.getStringExtra("uid");
+        AppState.instance().setUid(uid);
+        Log.d("MYAPPP",uid);
         leftButton=findViewById(R.id.leftButton);
         rightButton=findViewById(R.id.rightButton);
         monthText=findViewById(R.id.monthText2);
@@ -116,12 +121,27 @@ public class ListPaymentsActivity extends AppCompatActivity {
             AppState.instance().syncBackupWithFirebase();
         }
         dbref=AppState.instance().getDBref();
-        dbref.child("wallet").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        /*dbref.child("wallet").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
-                dbref.child("wallet").addValueEventListener(new PaymentDataListener());
+                if(!task.getResult().exists())
+                {
+                    dbref.child("wallet").child(uid).setValue(3);
+                }
+            }
+        });*/
+        dbref.child("wallet").child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                dbref.child("wallet").child(uid).addValueEventListener(new PaymentDataListener());
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override
