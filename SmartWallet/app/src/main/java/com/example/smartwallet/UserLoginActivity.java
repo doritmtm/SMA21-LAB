@@ -45,7 +45,8 @@ public class UserLoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_login);
         Intent authUIintent= AuthUI.getInstance().createSignInIntentBuilder().setAvailableProviders(
                 Arrays.asList(
-                        new AuthUI.IdpConfig.EmailBuilder().build()
+                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.GoogleBuilder().build()
                 )).build();
         authUILauncher.launch(authUIintent);
     }
@@ -53,6 +54,10 @@ public class UserLoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(loginResult==RESULT_OK)
+        {
+            finish();
+        }
     }
 
 }
